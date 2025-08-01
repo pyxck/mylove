@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tulipán Interactivo con Sorpresa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #cbb682; 
+      overflow: hidden;
+      font-family: 'Dancing Script', cursive; 
+      position: relative;
+    }
+
+    
+  #tulipan {
+  display: block;
+  position: absolute;
+  bottom: 5%; 
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 90vw;
+  max-height: 70vh;
+  width: auto;
+  height: 60vh;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+    .palabra {
+      position: absolute;
+      font-size: 34px; 
+      color: #3d001e; 
+      opacity: 0; 
+      animation: aparecer 1s ease-out forwards;
+      white-space: nowrap; 
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2); 
+      z-index: 10; 
+    }
+
+    @keyframes aparecer {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes desaparecer {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.8); 
+      }
+    }
+
+    
+    #cinnamonroll {
+  position: absolute;
+  top: 5%;
+  left: 5%; 
+  width: 25vw; 
+  cursor: pointer;
+  user-select: none;
+  z-index: 20;
+  -webkit-tap-highlight-color: transparent;
+}
+
+    #cinnamonroll-message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      font-size: 28px;
+      color: #3d001e;
+      z-index: 30; 
+      display: none; 
+      max-width: 80%;
+      line-height: 1.4;
+    }
+
+    
+    #carta-final {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.98); 
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      font-size: 32px;
+      color: #3d001e;
+      z-index: 40; 
+      display: none; 
+      width: 600px;
+      max-width: 90%;
+      max-height: 90vh; 
+      overflow-y: auto; 
+      line-height: 1.5;
+    }
+
+    #carta-final button, #boton-oki {
+      margin-top: 25px;
+      padding: 12px 25px;
+      font-size: 22px;
+      font-family: 'Dancing Script', cursive;
+      background-color: #f0c3d6; 
+      color: #3d001e;
+      border: 2px solid #e0b3c6;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #carta-final button:hover, #boton-oki:hover {
+      background-color: #e0b3c6;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); 
+      z-index: 25; 
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+  .palabra {
+    font-size: 24px; 
+  }
+
+  #cinnamonroll-message {
+    font-size: 18px; 
+    padding: 20px;
+  }
+
+  #carta-final {
+    font-size: 20px; 
+    padding: 25px;
+  }
+
+  #carta-final button {
+    font-size: 18px; 
+  }
+}
+  
+  </style>
+</head>
+<body>
+
+  <img id="tulipan" src="tulipan.png" alt="Tulipán">
+  <img id="cinnamonroll" src="cinna.png" alt="Cinnamonroll"> <div id="cinnamonroll-message">
+    Quieres que cinna te de un regalito especial de mi parte? entonces haz 100 clicks.
+    ahora mismo llevas <span id="click-count">0</span> clics.
+    <button id="boton-oki" onclick="hideCinnamonrollMessage()">oki</button>
+  </div>
+
+  <div id="carta-final">
+    <h2>Hola mi princesa hermosa</h2>
+    <p>Esta es una pequeña carta para recordarte que eres la mejor novia del mundo y en un futuro la mejor esposa</p>
+    <p>te apoyare y te dare mi amor incondicional hasta quedarme sin aliento, enserio estoy muy orgullo de ti, tanto como persona y como mi pareja, cada dia que pasa solo hace quererte aun mas a mi lado</p>
+    <p>juro seguir luchando por nosotros aunque no tenga fuerzas, seguire mejorando para que conozcas la mejor version de mi</p>
+    <p>Te amo mucho Ann, con amor</p>
+    <p>tu tonoto</p>
+    <button onclick="closeCartaFinal()">Cerrar Carta</button>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    const palabras = ["Te quiero", "Te amo", "Mi princesa hermosa", "La mejor novia del mundo", "Mi niña", "Mi futura esposa", "La madre de nuestros hijos", "Eres mia", "me perteneces", "miau", "Mi tonota", "Mi cachorra", "solo mia"];
+    const tulipan = document.getElementById("tulipan");
+    const cinnamonroll = document.getElementById("cinnamonroll");
+    const cinnamonrollMessage = document.getElementById("cinnamonroll-message");
+    const clickCountSpan = document.getElementById("click-count");
+    const cartaFinal = document.getElementById("carta-final");
+    const overlay = document.getElementById("overlay");
+
+    let clickCounter = 0;
+    const clicksRequired = 100; // clicks requueridos para desbloquear la carta
+
+    // funcion para mostrar el mensaje de cinna
+    function showCinnamonrollMessage() {
+      clickCountSpan.textContent = clickCounter; // actualiza el contador en el mensaje
+      cinnamonrollMessage.style.display = 'block';
+      overlay.style.display = 'block'; 
+    }
+
+    // funcion para ocultar el mensaje de cinna
+    function hideCinnamonrollMessage() {
+      cinnamonrollMessage.style.display = 'none';
+      overlay.style.display = 'none'; 
+    }
+
+    // funcion para mostrar la carta final
+    function showCartaFinal() {
+      cartaFinal.style.display = 'block';
+      overlay.style.display = 'block'; // Muestra el overlay
+    }
+
+    // funcion para cerrar la carta final
+    function closeCartaFinal() {
+      cartaFinal.style.display = 'none';
+      overlay.style.display = 'none'; 
+    }
+
+   
+    tulipan.addEventListener("click", (event) => {
+      
+      if (cinnamonrollMessage.style.display === 'block' || cartaFinal.style.display === 'block') {
+        return;
+      }
+
+      const palabra = document.createElement("div");
+      palabra.className = "palabra";
+      palabra.textContent = palabras[Math.floor(Math.random() * palabras.length)];
+
+      const padding = 20;
+      const x = Math.random() * (window.innerWidth - palabra.offsetWidth - padding * 2) + padding;
+      const y = Math.random() * (window.innerHeight - palabra.offsetHeight - padding * 2) + padding;
+
+      palabra.style.left = `${x}px`;
+      palabra.style.top = `${y}px`;
+
+      document.body.appendChild(palabra);
+
+      setTimeout(() => {
+        palabra.style.animation = 'desaparecer 1.5s ease-out forwards';
+        setTimeout(() => palabra.remove(), 1500);
+      }, 2000);
+
+      
+      clickCounter++;
+     
+    });
+
+    
+    cinnamonroll.addEventListener("click", () => {
+      if (clickCounter >= clicksRequired) {
+        showCartaFinal(); 
+      } else {
+        showCinnamonrollMessage(); 
+      }
+    });
+  </script>
+
+</body>
+</html>
